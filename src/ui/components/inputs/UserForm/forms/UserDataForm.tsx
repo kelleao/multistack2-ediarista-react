@@ -1,6 +1,6 @@
 import { FormValues } from 'data/@types/forms/FormValue';
-// import { UserContext } from 'data/contexts/UserContext';
-// import { TextFormatService } from 'data/services/TextFormatService';
+import { UserContext } from 'data/contexts/UserContext';
+import { TextFormatService } from 'data/services/TextFormatService';
 import React, { useContext } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import TextField from '../../TextField/TextField';
@@ -15,16 +15,17 @@ export const UserDataForm: React.FC<UserDataFormProps> = ({
     cadastro = false,
 }) => {
     const {
-        register,
-        formState: { errors },
-        control,
-    } = useFormContext<FormValues>();
+            register,
+            formState: { errors },
+            control,
+        } = useFormContext<FormValues>(),
+        { user } = useContext(UserContext).userState;
 
     return (
         <UserData>
             <TextField
                 label={'Nome completo'}
-                defaultValue={''}
+                defaultValue={user.nome_completo}
                 style={{ gridArea: 'nome' }}
                 {...register('usuario.nome_completo')}
                 error={errors?.usuario?.nome_completo !== undefined}
@@ -33,7 +34,9 @@ export const UserDataForm: React.FC<UserDataFormProps> = ({
 
             <Controller
                 name={'usuario.nascimento'}
-                defaultValue={''}
+                defaultValue={TextFormatService.reverseDate(
+                    user.nascimento as string
+                )}
                 control={control}
                 render={({ field: { ref, ...inputProps } }) => (
                     <TextFieldMask
@@ -49,7 +52,7 @@ export const UserDataForm: React.FC<UserDataFormProps> = ({
 
             <Controller
                 name={'usuario.cpf'}
-                defaultValue={''}
+                defaultValue={user.cpf}
                 control={control}
                 render={({ field: { ref, ...inputProps } }) => (
                     <TextFieldMask
@@ -66,7 +69,7 @@ export const UserDataForm: React.FC<UserDataFormProps> = ({
 
             <Controller
                 name={'usuario.telefone'}
-                defaultValue={''}
+                defaultValue={user.telefone}
                 control={control}
                 render={({ field: { ref, ...inputProps } }) => (
                     <TextFieldMask

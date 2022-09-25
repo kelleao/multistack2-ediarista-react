@@ -20,6 +20,8 @@ import SafeEnvironment from 'ui/components/feedback/SafeEnvironment/SafeEnvironm
 import SiteInformation from 'ui/components/data-display/SiteInformation/SiteInformation';
 import InformacoesPagamento from './_informacoes-pagamento';
 import Link from 'ui/components/navigation/Link/Link';
+import { TextFormatService } from 'data/services/TextFormatService';
+import DataLista from 'ui/components/data-display/DataLista/DataLista';
 // import { Component } from './_contratacao.styled';
 
 const Contratacao: React.FC = () => {
@@ -28,11 +30,15 @@ const Contratacao: React.FC = () => {
             step,
             setStep,
             breadcrumbItems,
+            tipoLimpeza,
+            totalPrice,
+            tamanhoCasa,
+            podemosAtender,
             loginForm,
             onLoginFormSubmit,
             serviceForm,
             onServiceFormSubmit,
-            servico,
+            servicos,
             hasLogin,
             setHasLogin,
             clientForm,
@@ -41,7 +47,16 @@ const Contratacao: React.FC = () => {
             setLoginError,
             paymentForm,
             onPaymentFormSubmit,
-        } = useContratacao();
+        } = useContratacao(),
+        dataAtendimento = serviceForm.watch('faxina.data_atendimento');
+
+    if (!servicos || servicos.length < 1) {
+        return (
+            <Container sx={{ textAlign: 'center', my: 10 }}>
+                <CircularProgress />
+            </Container>
+        );
+    }
     return (
         <div>
             {!isMobile && <SafeEnvironment />}
@@ -49,6 +64,29 @@ const Contratacao: React.FC = () => {
                 selected={breadcrumbItems[step - 1]}
                 items={breadcrumbItems}
             />
+
+            {isMobile && [2, 3].includes(step) && (
+                <DataLista
+                    header={
+                        <Typography
+                            color={'primary'}
+                            sx={{ fontWeight: 'thin' }}
+                        >
+                            O valor total do serviço é:{' '}
+                            {TextFormatService.currency(totalPrice)}
+                        </Typography>
+                    }
+                    body={
+                        <>
+                            {tipoLimpeza?.nome}
+                            <br />
+                            Tamanho: {tamanhoCasa.join(', ')}
+                            <br />
+                            Data: {dataAtendimento}
+                        </>
+                    }
+                />
+            )}
             {step === 1 && (
                 <PageTitle title={'Nos conte um pouco sobre o serviço!'} />
             )}
@@ -95,7 +133,11 @@ const Contratacao: React.FC = () => {
                                 )}
                                 hidden={step !== 1}
                             >
-                                <DetalhesServico servicos={servico} />
+                                <DetalhesServico
+                                    servicos={servicos}
+                                    comodos={tamanhoCasa.length}
+                                    podemosAtender={podemosAtender}
+                                />
                             </form>
                         </FormProvider>
 
@@ -198,22 +240,22 @@ const Contratacao: React.FC = () => {
                             items={[
                                 {
                                     title: 'Tipo',
-                                    description: [''],
+                                    description: [tipoLimpeza?.nome],
                                     icon: 'twf-check-circle',
                                 },
                                 {
                                     title: 'Tamanho',
-                                    description: [''],
+                                    description: tamanhoCasa,
                                     icon: 'twf-check-circle',
                                 },
                                 {
                                     title: 'Data',
-                                    description: [''],
+                                    description: [dataAtendimento as string],
                                     icon: 'twf-check-circle',
                                 },
                             ]}
                             footer={{
-                                text: 'R$80,00',
+                                text: TextFormatService.currency(totalPrice),
                                 icon: 'twf-credit-card',
                             }}
                         />

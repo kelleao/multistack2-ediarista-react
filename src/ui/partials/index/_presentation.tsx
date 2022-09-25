@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/alt-text */
 import { useState, useEffect } from 'react';
 import {
     ContainerStyled,
@@ -31,8 +32,9 @@ const Presentation = () => {
                     São mais de 5.000 profissionais esperando por você!
                 </SectionDescription>
                 <SectionButton
-                    mui={{ variant: 'contained' }} 
-                    href={'/encontrar-diarista'}>
+                    mui={{ variant: 'contained' }}
+                    href={'/encontrar-diarista'}
+                >
                     Encontrar um(a) diarista
                 </SectionButton>
                 <SectionPictureContainer>

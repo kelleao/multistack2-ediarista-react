@@ -105,7 +105,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                                 }
                                 onDec={() =>
                                     field.onChange(
-                                        Math.max(0, (field.value as number) + 1)
+                                        Math.max(0, (field.value as number) - 1)
                                     )
                                 }
                             />
@@ -168,7 +168,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                                     mask={'99:99'}
                                     inputProps={{
                                         readOnly: true,
-                                        disabled: true,
+                                        disabled: 'true',
                                     }}
                                     label={'Hora Término'}
                                     error={

@@ -1,7 +1,6 @@
 import React from 'react';
-import {} from '@mui/material';
+import { Typography } from '@mui/material';
 import { passwordStrength } from 'check-password-strength';
-import { Typography } from '@material-ui/core';
 import {
     PasswordStrengthLabel,
     PasswordStrengthBar,

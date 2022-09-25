@@ -6,7 +6,11 @@ import UserInformation from 'ui/components/data-display/UserInformation/UserInfo
 import SafeEnvironment from 'ui/components/feedback/SafeEnvironment/SafeEnvironment';
 import TextFieldMask from 'ui/components/inputs/TextFieldMask/TextFieldMask';
 
-import { FormElementsContainer, ProfissionaisContainer, ProfissionaisPaper } from './_verificar-profissionais.styled';
+import {
+    FormElementsContainer,
+    ProfissionaisContainer,
+    ProfissionaisPaper,
+} from './_verificar-profissionais.styled';
 
 const VerificarProfissionais: React.FC = () => {
     const {
@@ -24,47 +28,50 @@ const VerificarProfissionais: React.FC = () => {
     return (
         <>
             <SafeEnvironment />
-            <PageTitle 
+            <PageTitle
                 title={'Conheça os profissionais'}
-                subtitle={'Preencha seu endereço e veja todos os profissionais da sua localidade'}
+                subtitle={
+                    'Preencha seu endereço e veja todos os profissionais da sua localidade'
+                }
             />
 
             <Container sx={{ mb: 10 }}>
                 <FormElementsContainer>
-                    <TextFieldMask 
+                    <TextFieldMask
                         mask={'99.999-999'}
                         label={'Digite seu CEP'}
                         fullWidth
                         value={cep}
                         onChange={(event) => setCep(event.target.value)}
                     />
-                    {erro && (<Typography color={'error'}>{erro}</Typography>)}
-                   
-                    <Button 
-                        variant={'contained'} 
+                    {erro && <Typography color={'error'}>{erro}</Typography>}
+
+                    <Button
+                        variant={'contained'}
                         color={'secondary'}
-                        sx={{ width: '220px'}} 
+                        sx={{ width: '220px' }}
                         disabled={!cepValido || carregando}
                         onClick={() => buscarProfissionais(cep)}
                     >
-                            {carregando ? <CircularProgress size={20} /> : 'Buscar'}
+                        {carregando ? <CircularProgress size={20} /> : 'Buscar'}
                     </Button>
                 </FormElementsContainer>
-                {buscaFeita && (diaristas.length > 0 ?
-                    (<ProfissionaisPaper>
-                        <ProfissionaisContainer>
-                            {diaristas.map((item, index) => (
-                                <UserInformation 
-                                    key={index}
-                                    name={item.nome_completo}
-                                    picture={item.foto_usuario || ''}
-                                    rating={item.reputacao || 0}
-                                    description={item.cidade}
-                                />
-                            ))}
-                        </ProfissionaisContainer>
-                        <Container sx={{ textAlign: 'center' }}>
-                        {diaristasRestantes > 0 && (
+                {buscaFeita &&
+                    (diaristas.length > 0 ? (
+                        <ProfissionaisPaper>
+                            <ProfissionaisContainer>
+                                {diaristas.map((item, index) => (
+                                    <UserInformation
+                                        key={index}
+                                        name={item.nome_completo}
+                                        picture={item.foto_usuario || ''}
+                                        rating={item.reputacao || 0}
+                                        description={item.cidade}
+                                    />
+                                ))}
+                            </ProfissionaisContainer>
+                            <Container sx={{ textAlign: 'center' }}>
+                                {diaristasRestantes > 0 && (
                                     <Typography
                                         variant={'body2'}
                                         color={'textSecondary'}
@@ -77,16 +84,22 @@ const VerificarProfissionais: React.FC = () => {
                                         ao seu endereço.
                                     </Typography>
                                 )}
-                            <Button variant={'contained'} color={'secondary'} sx={{ mt: 5 }}>Contratar um(a) profissional</Button>
-                        </Container>
-                    </ProfissionaisPaper>) : (
+                                <Button
+                                    variant={'contained'}
+                                    color={'secondary'}
+                                    sx={{ mt: 5 }}
+                                >
+                                    Contratar um(a) profissional
+                                </Button>
+                            </Container>
+                        </ProfissionaisPaper>
+                    ) : (
                         <Typography align={'center'} color={'textPrimary'}>
-                            Ainda não temos nenhum(a) diarista disponível em sua região
+                            Ainda não temos nenhum(a) diarista disponível em sua
+                            região
                         </Typography>
-                    )
-                )}
+                    ))}
             </Container>
-
         </>
     );
 };

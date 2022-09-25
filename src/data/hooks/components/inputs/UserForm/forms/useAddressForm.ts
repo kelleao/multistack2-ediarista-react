@@ -3,15 +3,19 @@ import useCities from 'data/hooks/useCities';
 import { LocationService } from 'data/services/LocationService';
 import { useEffect, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
+import { useContext } from 'react';
+import { UserContext } from 'data/contexts/UserContext';
 
 export default function useAddressForm() {
     const {
-        register,
-        control,
-        watch,
-        setValue,
-        formState: { errors },
-    } = useFormContext<FormValues>();
+            register,
+            control,
+            watch,
+            setValue,
+            formState: { errors },
+        } = useFormContext<FormValues>(),
+        { userAddress } = useContext(UserContext).userState;
+
     const [addressState, addressCity, addressCep] = watch([
             'endereco.estado',
             'endereco.cidade',
@@ -52,7 +56,10 @@ export default function useAddressForm() {
                     newAddress.localidade &&
                         setValue('endereco.cidade', newAddress.localidade);
                     newAddress.ibge &&
-                        setValue('endereco.codigo_ibge', newAddress.ibge);
+                        setValue(
+                            'endereco.codigo_ibge',
+                            newAddress.ibge as any
+                        );
                     newAddress.bairro &&
                         setValue('endereco.bairro', newAddress.bairro);
                     newAddress.logradouro &&
@@ -74,5 +81,6 @@ export default function useAddressForm() {
         addressCity,
         addressCep,
         register,
+        userAddress,
     };
 }

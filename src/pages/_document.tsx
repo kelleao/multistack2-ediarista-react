@@ -1,26 +1,35 @@
-import React from "react";
-import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from "next/document";
-import { ServerStyleSheets } from '@material-ui/core';
+/* eslint-disable @next/next/no-css-tags */
+import React from 'react';
+import Document, {
+    Html,
+    Head,
+    Main,
+    NextScript,
+    DocumentContext,
+    DocumentInitialProps,
+} from 'next/document';
+import { ServerStyleSheets } from '@mui/styles';
 
-
-class MyDocument extends Document{
-    static async getInitialProps(ctx: DocumentContext): Promise<DocumentInitialProps> {
+class MyDocument extends Document {
+    static async getInitialProps(
+        ctx: DocumentContext
+    ): Promise<DocumentInitialProps> {
         const sheets = new ServerStyleSheets(),
-        originalRenderPage = ctx.renderPage;
-        ctx.renderPage = () => originalRenderPage({
-            enchanceApp: (App) => (props) => 
-                sheets.collect(<App {...props} />)                
-        });
-        
+            originalRenderPage = ctx.renderPage;
+        ctx.renderPage = () =>
+            originalRenderPage({
+                enhanceApp: (App) => (props) =>
+                    sheets.collect(<App {...props} />),
+            });
+
         const initialProps = await Document.getInitialProps(ctx);
-        return{
+        return {
             ...initialProps,
             styles: [
                 ...React.Children.toArray(initialProps.styles),
                 sheets.getStyleElement(),
-            ]
-
-        }
+            ],
+        };
     }
 
     render(): JSX.Element {
@@ -31,7 +40,7 @@ class MyDocument extends Document{
                         rel="stylesheet"
                         href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
                     />
-                     <link
+                    <link
                         rel="preconnect"
                         href="https://fonts.googleapis.com"
                     />
@@ -55,7 +64,6 @@ class MyDocument extends Document{
                 </body>
             </Html>
         );
-    
     }
 }
 
