@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PropsWithChildren } from 'react';
 import NextLink, { LinkProps as NextLinkProps } from 'next/link';
 import Router from 'next/router';
 import {
@@ -15,7 +15,7 @@ export interface LinkProps {
     onClick?: () => void;
 }
 
-const Link: React.FC<LinkProps> = ({
+const Link: React.FC<PropsWithChildren<LinkProps>> = ({
     children,
     href,
     mui,

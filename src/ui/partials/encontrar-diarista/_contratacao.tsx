@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     Box,
     Button,
@@ -22,6 +22,7 @@ import InformacoesPagamento from './_informacoes-pagamento';
 import Link from 'ui/components/navigation/Link/Link';
 import { TextFormatService } from 'data/services/TextFormatService';
 import DataLista from 'ui/components/data-display/DataLista/DataLista';
+import { BrowserService } from 'data/services/BrowserService';
 // import { Component } from './_contratacao.styled';
 
 const Contratacao: React.FC = () => {
@@ -49,6 +50,10 @@ const Contratacao: React.FC = () => {
             onPaymentFormSubmit,
         } = useContratacao(),
         dataAtendimento = serviceForm.watch('faxina.data_atendimento');
+
+    useEffect(() => {
+        BrowserService.scrollToTop();
+    }, [step]);
 
     if (!servicos || servicos.length < 1) {
         return (

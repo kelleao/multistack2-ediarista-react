@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { LocalStorage } from './StorageService';
 
@@ -39,7 +39,7 @@ async function handleTokenRefresh(error: { config: AxiosRequestConfig }) {
             ApiService.defaults.headers.common.Authorization =
                 'Bearer ' + data.access;
 
-            error.config.headers.Authorization =
+            error.config.headers!.Authorization =
                 ApiService.defaults.headers.common.Authorization;
             return ApiService(error.config);
         } catch (err) {
@@ -55,4 +55,26 @@ export function linksResolver(
     name: string
 ): ApiLinksInterface | undefined {
     return links.find((link) => link.rel === name);
+}
+
+export function ApiServiceHateoas(
+    links: ApiLinksInterface[] = [],
+    name: string,
+    onCanRequest: (
+        request: <T>(data?: AxiosRequestConfig) => Promise<AxiosResponse<T>>
+    ) => void,
+    onCantRequest?: Function
+) {
+    const requestLink = linksResolver(links, name);
+    if (requestLink) {
+        onCanRequest(<T>(data?: AxiosRequestConfig) => {
+            return ApiService.request<T>({
+                method: requestLink.type,
+                url: requestLink.uri,
+                ...data,
+            });
+        });
+    } else {
+        onCantRequest?.();
+    }
 }

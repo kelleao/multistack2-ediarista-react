@@ -3,7 +3,7 @@ import { UserInterface, UserType } from 'data/@types/UserInterface';
 import { ApiService } from './ApiService';
 import { ObjectService } from './ObjectService';
 import { TextFormatService } from './TextFormatService';
-import { FieldPath, UseFormReturn } from 'react-hook-form';
+import { FieldPath, UseFormReturn, FieldValues } from 'react-hook-form';
 
 export const UserService = {
     async cadastrar(
@@ -38,7 +38,10 @@ export const UserService = {
         return response.data;
     },
 
-    handleNewUserError<T>(error: any, form: UseFormReturn<T>): void {
+    handleNewUserError<T extends FieldValues>(
+        error: any,
+        form: UseFormReturn<T>
+    ): void {
         const errorList = error?.response?.data;
         if (errorList) {
             if (errorList.cpf) {
