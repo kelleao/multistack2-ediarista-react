@@ -29,10 +29,10 @@ export const LocalStorage = {
     get<T>(key: string, defaultValue: T): T | string {
         return BaseStorage.get(localStorage, key, defaultValue);
     },
-    set<T>(key: string, value: T) {
+    set<T>(key: string, value: T): void {
         BaseStorage.set(localStorage, key, value);
     },
-    clear(key: string) {
+    clear(key: string): void {
         BaseStorage.clear(localStorage, key);
     },
     clearAll(): void {
@@ -44,10 +44,10 @@ export const SessionStorage = {
     get<T>(key: string, defaultValue: T): T | string {
         return BaseStorage.get(sessionStorage, key, defaultValue);
     },
-    set<T>(key: string, value: T) {
+    set<T>(key: string, value: T): void {
         BaseStorage.set(sessionStorage, key, value);
     },
-    clear(key: string) {
+    clear(key: string): void {
         BaseStorage.clear(sessionStorage, key);
     },
     clearAll(): void {

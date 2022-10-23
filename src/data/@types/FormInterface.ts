@@ -22,9 +22,11 @@ export interface CredenciaisInterface {
     password: string;
 }
 
-export interface CadastroClienteFormDataInterface {
+export interface CadastroUerInterface {
     usuario: UserInterface;
 }
+export interface CadastroClienteFormDataInterface
+    extends CadastroUerInterface {}
 
 export interface PagamentoFormDataInterface {
     pagamento: {

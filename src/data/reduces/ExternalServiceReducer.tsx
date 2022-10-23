@@ -2,10 +2,9 @@ import React, { useReducer, useEffect } from 'react';
 import produce from 'immer';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { ApiService } from 'data/services/ApiService';
-import { string } from 'yup';
 
 export const initialState = {
-    externalService: [] as ApiLinksInterface[],
+    externalServices: [] as ApiLinksInterface[],
 };
 
 export type InitialStateType = typeof initialState;
@@ -26,7 +25,7 @@ const reducer = (
     const nextState = produce(state, (draftState) => {
         switch (action.type) {
             case 'UPDATE':
-                draftState.externalService =
+                draftState.externalServices =
                     action.payload as ApiLinksInterface[];
                 break;
         }

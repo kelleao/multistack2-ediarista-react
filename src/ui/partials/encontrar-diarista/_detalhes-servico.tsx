@@ -207,7 +207,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
             </Typography>
             <AddressForm />
 
-            {!podemosAtender && (
+            {podemosAtender && (
                 <Typography color={'error'} sx={{ pb: 2 }} align={'center'}>
                     Infelizmente ainda não atendemos na sua região
                 </Typography>
@@ -216,7 +216,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                 <Button
                     variant={'contained'}
                     color={'secondary'}
-                    disabled={comodos === 0 || !podemosAtender}
+                    disabled={comodos === 0 || podemosAtender}
                     type={'submit'}
                 >
                     Ir para identificação

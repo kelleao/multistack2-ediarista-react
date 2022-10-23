@@ -77,7 +77,19 @@ export const FormSchemaService = {
                                 }).card_number;
                             }
                         ),
-                    nome_cartao: yup.string(),
+                    nome_cartao: yup
+                        .string()
+                        .min(3, 'Minim de três caractere')
+                        .test(
+                            'card_holder_name',
+                            'Nome do cartão possui número',
+                            (value) => {
+                                if (value) {
+                                    return !/[0-9]/.test(value);
+                                }
+                                return false;
+                            }
+                        ),
                     validade: yup
                         .string()
                         .test(

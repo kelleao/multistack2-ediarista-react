@@ -1,5 +1,3 @@
-import { date } from 'yup/lib/locale';
-
 export const DateService = {
     addHours(startTime: string, hours: number): string {
         let [hour, minute] = startTime.split(':').map(Number);

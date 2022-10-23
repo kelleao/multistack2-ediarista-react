@@ -11,7 +11,7 @@ export interface DiariaInterface {
     tempo_atendimento: number;
     preco: number;
 
-    //status?: DiariaStatus;
+    status?: DiariaStatus;
     logradouro?: string;
     bairro: string;
     complemento: string;
@@ -29,7 +29,7 @@ export interface DiariaInterface {
     quantidade_outros: number;
 
     observacoes?: string;
-    //diarista?: UserInterface;
+    diarista?: UserInterface;
 
     servico: number;
     nome_servico: string;

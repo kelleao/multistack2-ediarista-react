@@ -19,6 +19,8 @@ const UserForm: React.FC<UserFormProps> = () => {
 export default UserForm;
 
 export * from './forms/AddressForm';
+export * from './forms/CitiesForm';
+export * from './forms/FinancialForm';
 export * from './forms/NewContactForm';
 export * from './forms/PaymentForm';
 export * from './forms/PictureForm';

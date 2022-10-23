@@ -4,6 +4,8 @@ import { ApiService } from './ApiService';
 import { ObjectService } from './ObjectService';
 import { TextFormatService } from './TextFormatService';
 import { FieldPath, UseFormReturn, FieldValues } from 'react-hook-form';
+import { CadastroUerInterface } from 'data/@types/FormInterface';
+import axios from 'axios';
 
 export const UserService = {
     async cadastrar(
@@ -38,23 +40,28 @@ export const UserService = {
         return response.data;
     },
 
-    handleNewUserError<T extends FieldValues>(
+    handleNewUserError(
         error: any,
-        form: UseFormReturn<T>
+        form: UseFormReturn<CadastroUerInterface>
     ): void {
-        const errorList = error?.response?.data;
-        if (errorList) {
-            if (errorList.cpf) {
-                form.setError('usuario.cpf' as FieldPath<T>, {
-                    type: 'cadastrado',
-                    message: 'CPF já cadastrado',
-                });
-            }
-            if (errorList.email) {
-                form.setError('usuario.email' as FieldPath<T>, {
-                    type: 'cadastrado',
-                    message: 'E-mail já cadastrado',
-                });
+        if (axios.isAxiosError(error)) {
+            const errorList = error.response?.data as
+                | { errors: UserInterface }
+                | undefined;
+
+            if (errorList) {
+                if (errorList.errors.cpf) {
+                    form.setError('usuario.cpf', {
+                        type: 'cadastrado',
+                        message: 'CPF já cadastrado',
+                    });
+                }
+                if (errorList.errors.email) {
+                    form.setError('usuario.email', {
+                        type: 'cadastrado',
+                        message: 'E-mail já cadastrado',
+                    });
+                }
             }
         }
     },

@@ -10,25 +10,21 @@ import {
     NovaDiariaFormDataInterface,
     PagamentoFormDataInterface,
 } from 'data/@types/FormInterface';
-import useApi, { useApiHateoas } from '../useApi.hook';
+import useApiHateoas from '../useApi.hook';
 import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
 import { houseParts } from '@partials/encontrar-diarista/_detalhes-servico';
 import { ExternalServiceContex } from 'data/contexts/ExternalServiceContext';
-import {
-    ApiService,
-    ApiServiceHateoas,
-    linksResolver,
-} from 'data/services/ApiService';
+import { ApiServiceHateoas, linksResolver } from 'data/services/ApiService';
 import { UserContext } from 'data/contexts/UserContext';
 import { UserInterface, UserType } from 'data/@types/UserInterface';
-import { request } from 'http';
 import { TextFormatService } from 'data/services/TextFormatService';
 import { LoginService } from 'data/services/LoginService';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { UserService } from 'data/services/UserService';
 import { PaymentService } from 'data/services/PaymentService';
+import { CardInterface } from 'pagarme';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -58,7 +54,7 @@ export default function useContratacao() {
         { userState, userDispatch } = useContext(UserContext),
         { externalServicesState } = useContext(ExternalServiceContex),
         servicos = useApiHateoas<ServicoInterface[]>(
-            externalServicesState.externalService,
+            externalServicesState.externalServices,
             'listar_servicos'
         ).data,
         dadosFaxina = serviceForm.watch('faxina'),
@@ -70,6 +66,7 @@ export default function useContratacao() {
                 const selectedService = servicos.find(
                     (servico) => servico.id === dadosFaxina?.servico
                 );
+
                 if (selectedService) {
                     return selectedService;
                 }
@@ -122,7 +119,7 @@ export default function useContratacao() {
         const cep = ((cepFaxina as string) || '').replace(/\D/g, '');
         if (ValidationService.cep(cep)) {
             ApiServiceHateoas(
-                externalServicesState.externalService,
+                externalServicesState.externalServices,
                 'verificar_disponibilidade_atendimento',
                 (request) => {
                     request<{ disponibilidade: boolean }>({
@@ -130,16 +127,18 @@ export default function useContratacao() {
                             cep,
                         },
                     })
-                        .then((response) => {
-                            setPodemosAtender(response.data.disponibilidade);
+                        .then(({ data }) => {
+                            setPodemosAtender(data.disponibilidade);
                         })
-                        .catch((_error) => setPodemosAtender(false));
+                        .catch((_err) => {
+                            setPodemosAtender(false);
+                        });
                 }
             );
         } else {
             setPodemosAtender(true);
         }
-    }, [cepFaxina]);
+    }, [cepFaxina, externalServicesState.externalServices]);
 
     function onServiceFormSubmit(data: NovaDiariaFormDataInterface) {
         if (userState.user.nome_completo) {
@@ -151,7 +150,7 @@ export default function useContratacao() {
 
     async function onClientFormSubmit(data: CadastroClienteFormDataInterface) {
         const newUserlink = linksResolver(
-            externalServicesState.externalService,
+            externalServicesState.externalServices,
             'cadastrar_usuario'
         );
         if (newUserlink) {
@@ -186,9 +185,9 @@ export default function useContratacao() {
         }
     }
 
-    async function onLoginFormSubmit(data: {
-        login: LoginFormDataInterface<CredenciaisInterface>;
-    }) {
+    async function onLoginFormSubmit(
+        data: LoginFormDataInterface<CredenciaisInterface>
+    ) {
         const loginSuccess = await login(data.login);
         if (loginSuccess) {
             const user = await LoginService.getUser();
@@ -199,7 +198,7 @@ export default function useContratacao() {
         }
     }
     async function login(
-        credentials: LoginFormDataInterface<CredenciaisInterface>,
+        credentials: CredenciaisInterface,
         user?: UserInterface
     ): Promise<boolean> {
         const loginSuccess = await LoginService.login(credentials);
@@ -214,15 +213,13 @@ export default function useContratacao() {
         return loginSuccess;
     }
 
-    async function onPaymentFormSubmit(data: {
-        pagamento: PagamentoFormDataInterface;
-    }) {
+    async function onPaymentFormSubmit(data: PagamentoFormDataInterface) {
         const cartao = {
-            card_number: data.pagamento.numero_cartao.replaceAll(' ', ''),
+            card_number: data?.pagamento.numero_cartao.replaceAll(' ', ''),
             card_holder_name: data.pagamento.nome_cartao,
             card_cvv: data.pagamento.codigo,
             card_expiration_date: data.pagamento.validade,
-        };
+        } as CardInterface;
         const hash = await PaymentService.getHash(cartao);
         ApiServiceHateoas(novaDiaria.links, 'pagar_diaria', async (request) => {
             try {
@@ -302,7 +299,7 @@ export default function useContratacao() {
 
     async function criarDiaria(user: UserInterface) {
         if (user.nome_completo) {
-            const serviceData = serviceForm.getValues();
+            const { endereco, faxina } = serviceForm.getValues();
             ApiServiceHateoas(
                 user.links,
                 'cadastrar_diaria',
@@ -311,20 +308,19 @@ export default function useContratacao() {
                         const novaDiaria = (
                             await request<DiariaInterface>({
                                 data: {
-                                    ...serviceData.endereco,
-                                    ...serviceData.faxina,
+                                    ...faxina,
+                                    ...endereco,
                                     cep: TextFormatService.getNumberFromText(
-                                        serviceData.endereco.cep
+                                        endereco.cep
                                     ),
                                     preco: totalPrice,
                                     tempo_atendimento: totalTime,
                                     data_atendimento:
                                         TextFormatService.reverseDate(
-                                            serviceData.faxina
-                                                .data_atendimento as string
-                                        ) +
-                                        'T' +
-                                        serviceData.faxina.hora_inicio,
+                                            faxina.data_atendimento +
+                                                'T' +
+                                                faxina.hora_inicio
+                                        ),
                                 },
                             })
                         ).data;

@@ -1,15 +1,10 @@
-import {
-    CredenciaisInterface,
-    LoginFormDataInterface,
-} from 'data/@types/FormInterface';
+import { CredenciaisInterface } from 'data/@types/FormInterface';
 import { UserInterface } from 'data/@types/UserInterface';
 import { ApiService } from './ApiService';
 import { LocalStorage } from './StorageService';
 
 export const LoginService = {
-    async login(
-        credentials: LoginFormDataInterface<CredenciaisInterface>
-    ): Promise<boolean> {
+    async login(credentials: CredenciaisInterface): Promise<boolean> {
         try {
             const { data } = await ApiService.post<{
                 access: string;
@@ -19,16 +14,15 @@ export const LoginService = {
             LocalStorage.set('token', data.access);
             LocalStorage.set('token_refresh', data.refresh);
 
-            ApiService.defaults.headers.common['Authorization'] =
-                'Bearer' + data.access;
+            ApiService.defaults.headers.common.Authorization = `Bearer ${data.access}`;
 
             return true;
         } catch (error) {
             return false;
         }
     },
-    logout() {
-        ApiService.post('/auth/logout/', {
+    async logout(): Promise<void> {
+        await ApiService.post('/auth/logout/', {
             refresh: LocalStorage.get('token_refresh', ''),
         });
 
@@ -38,8 +32,7 @@ export const LoginService = {
     async getUser(): Promise<UserInterface | undefined> {
         const token = LocalStorage.get('token', '');
         if (token) {
-            ApiService.defaults.headers.common['Authorization'] =
-                'Bearer' + token;
+            ApiService.defaults.headers.common.Authorization = `Bearer ${token}`;
             return (await ApiService.get<UserInterface>('/api/me')).data;
         }
         return undefined;

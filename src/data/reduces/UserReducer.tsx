@@ -7,6 +7,7 @@ import {
     CidadeInterface,
     EnderecoInterface,
 } from 'data/@types/EnderecoInterface';
+import { LoginService } from 'data/services/LoginService';
 
 export const initialState = {
     user: {
@@ -46,11 +47,6 @@ export type UserActionType = {
     payload?: unknown;
 };
 
-export interface UserReducerInterface {
-    userState: InitialStateType;
-    userDispatch: React.Dispatch<UserActionType>;
-}
-
 const reducer = (
     state: InitialStateType,
     action: UserActionType
@@ -76,8 +72,30 @@ const reducer = (
     return nextState;
 };
 
+export interface UserReducerInterface {
+    userState: InitialStateType;
+    userDispatch: React.Dispatch<UserActionType>;
+}
+
 export function useUserReducer(): UserReducerInterface {
     const [state, dispatch] = useReducer(reducer, initialState);
+
+    useEffect(() => {
+        getUser();
+    }, [state.user.id]);
+
+    async function getUser() {
+        try {
+            dispatch({ type: 'SET_LOGGING', payload: true });
+            const user = await LoginService.getUser();
+            if (user) {
+                dispatch({ type: 'SET_USER', payload: user });
+            }
+        } catch (error) {
+        } finally {
+            dispatch({ type: 'SET_LOGGING', payload: false });
+        }
+    }
 
     return {
         userState: state,
