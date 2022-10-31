@@ -1,20 +1,56 @@
-import { DiariaInterface } from 'data/@types/DiariaInterface';
+import { DiariaInterface, DiariaStatus } from 'data/@types/DiariaInterface';
 import { DiariaContext } from 'data/contexts/DiariasContext';
 import useIsMobile from 'data/hooks/uselsMobile';
 import usePagination from 'data/hooks/usePagination.hook';
 import { ApiServiceHateoas, linksResolver } from 'data/services/ApiService';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import { mutate } from 'swr';
 
 export default function useMinhaDiarias() {
     const isMobile = useIsMobile(),
         { diariaState } = useContext(DiariaContext),
         { diarias } = diariaState,
-        filteredData = diarias,
+        [filtro, setFiltro] = useState('pendentes'),
+        filteredData = useMemo(() => {
+            return filtrarDiarias(diarias, filtro);
+        }, [diarias, filtro]),
         { currentPage, setCurrentPage, totalPages, itemsPerPage } =
-            usePagination(diarias, 5),
+            usePagination(filteredData, 5),
+        [diariaCancelar, setDiariaCancelar] = useState({} as DiariaInterface),
         [diariaConfirmar, setDiariaConfirmar] = useState({} as DiariaInterface),
         [diariaAvaliar, setDiariaAvaliar] = useState({} as DiariaInterface);
+
+    function filtrarDiarias(diarias: DiariaInterface[], filtro: string) {
+        return diarias.filter((item) => {
+            const avaliada = [DiariaStatus.AVALIADO].includes(
+                    item.status as DiariaStatus
+                ),
+                cancelada = [
+                    DiariaStatus.CANCELADO,
+                    DiariaStatus.SEM_PAGAMENTO,
+                ].includes(item.status as DiariaStatus),
+                pendente = [
+                    DiariaStatus.PAGO,
+                    DiariaStatus.CONFIRMADO,
+                    DiariaStatus.CONCLUIDO,
+                ].includes(item.status as DiariaStatus);
+
+            if (
+                (avaliada && filtro === 'avaliadas') ||
+                (cancelada && filtro === 'canceladas') ||
+                (pendente && filtro === 'pendentes')
+            ) {
+                return true;
+            }
+
+            return false;
+        });
+    }
+
+    function alterarFiltro(filtro: string) {
+        setCurrentPage(1);
+        setFiltro(filtro);
+    }
 
     function podeVisualizar(diaria: DiariaInterface): boolean {
         return linksResolver(diaria.links, 'self') !== undefined;
@@ -45,6 +81,20 @@ export default function useMinhaDiarias() {
         );
     }
 
+    async function CancelarDiaria(diaria: DiariaInterface, motivo: string) {
+        ApiServiceHateoas(diaria.links, 'cancelar_diaria', async (request) => {
+            try {
+                await request({
+                    data: {
+                        motivo_cancelamento: motivo,
+                    },
+                });
+                setDiariaCancelar({} as DiariaInterface);
+                atualizarDiarias();
+            } catch (error) {}
+        });
+    }
+
     async function avaliarDiaria(
         diaria: DiariaInterface,
         avaliacao: { descricao: string; nota: number }
@@ -73,6 +123,9 @@ export default function useMinhaDiarias() {
         isMobile,
         podeVisualizar,
         podeCancelar,
+        diariaCancelar,
+        setDiariaCancelar,
+        CancelarDiaria,
         podeConfirmar,
         podeAvaliar,
         diariaAvaliar,
@@ -81,5 +134,8 @@ export default function useMinhaDiarias() {
         diariaConfirmar,
         setDiariaConfirmar,
         confirmarDiaria,
+        filtro,
+        setFiltro,
+        alterarFiltro,
     };
 }

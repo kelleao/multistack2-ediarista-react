@@ -13,7 +13,12 @@ import Table, {
     TableRow,
 } from 'ui/components/data-display/Table/Table';
 import Link from 'ui/components/navigation/Link/Link';
-import { ConfirmDialog, RatingDialog } from './_minhas-diaria-dialogs';
+import {
+    CancelDialog,
+    ConfirmDialog,
+    RatingDialog,
+} from './_minhas-diaria-dialogs';
+import { ButtonsContainer } from './_minhas-diarias.styled';
 
 // import { Component } from './_minhas-diarias.styled';
 
@@ -27,6 +32,9 @@ const MinhasDiarias: React.FC<PropsWithChildren> = () => {
         isMobile,
         podeVisualizar,
         podeCancelar,
+        diariaCancelar,
+        setDiariaCancelar,
+        CancelarDiaria,
         podeConfirmar,
         podeAvaliar,
         diariaAvaliar,
@@ -35,11 +43,42 @@ const MinhasDiarias: React.FC<PropsWithChildren> = () => {
         diariaConfirmar,
         setDiariaConfirmar,
         confirmarDiaria,
+        filtro,
+        setFiltro,
+        alterarFiltro,
     } = useMinhaDiarias();
     return (
         <>
             <Container sx={{ mb: 5, p: 0 }}>
                 <PageTitle title={'Minhas diárias'} />
+
+                <ButtonsContainer>
+                    <Button
+                        onClick={() => alterarFiltro('pendentes')}
+                        variant={
+                            filtro === 'pendentes' ? 'contained' : 'outlined'
+                        }
+                    >
+                        Pendentes
+                    </Button>
+                    <Button
+                        onClick={() => alterarFiltro('avaliadas')}
+                        variant={
+                            filtro === 'avaliadas' ? 'contained' : 'outlined'
+                        }
+                    >
+                        Avaliadas
+                    </Button>
+                    <Button
+                        onClick={() => alterarFiltro('canceladas')}
+                        variant={
+                            filtro === 'canceladas' ? 'contained' : 'outlined'
+                        }
+                    >
+                        Canceladas
+                    </Button>
+                </ButtonsContainer>
+
                 {filteredData.length > 0 ? (
                     isMobile ? (
                         <>
@@ -87,8 +126,11 @@ const MinhasDiarias: React.FC<PropsWithChildren> = () => {
                                                 <Button
                                                     color={'error'}
                                                     variant={'contained'}
+                                                    onClick={() =>
+                                                        setDiariaCancelar(item)
+                                                    }
                                                 >
-                                                    Cancelado
+                                                    Cancelar
                                                 </Button>
                                             )}
                                             {podeConfirmar(item) && (
@@ -173,7 +215,12 @@ const MinhasDiarias: React.FC<PropsWithChildren> = () => {
                                         </TableCell>
                                         <TableCell>
                                             {podeCancelar(item) && (
-                                                <Button color={'error'}>
+                                                <Button
+                                                    color={'error'}
+                                                    onClick={() =>
+                                                        setDiariaCancelar(item)
+                                                    }
+                                                >
                                                     Cancelar
                                                 </Button>
                                             )}
@@ -230,6 +277,14 @@ const MinhasDiarias: React.FC<PropsWithChildren> = () => {
                     diaria={diariaAvaliar}
                     onConfirm={avaliarDiaria}
                     onCancel={() => setDiariaAvaliar({} as DiariaInterface)}
+                />
+            )}
+
+            {diariaCancelar.id && (
+                <CancelDialog
+                    diaria={diariaCancelar}
+                    onConfirm={CancelarDiaria}
+                    onCancel={() => setDiariaCancelar({} as DiariaInterface)}
                 />
             )}
         </>
