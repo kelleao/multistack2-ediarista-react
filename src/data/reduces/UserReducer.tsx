@@ -1,13 +1,14 @@
 import React, { useReducer, useEffect } from 'react';
 import produce from 'immer';
 import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
-import { ApiService } from 'data/services/ApiService';
+import { ApiService, ApiServiceHateoas } from 'data/services/ApiService';
 import { UserInterface, UserType } from 'data/@types/UserInterface';
 import {
     CidadeInterface,
     EnderecoInterface,
 } from 'data/@types/EnderecoInterface';
 import { LoginService } from 'data/services/LoginService';
+import { request } from 'http';
 
 export const initialState = {
     user: {
@@ -90,11 +91,33 @@ export function useUserReducer(): UserReducerInterface {
             const user = await LoginService.getUser();
             if (user) {
                 dispatch({ type: 'SET_USER', payload: user });
+                if (user.tipo_usuario === UserType.Diarista) {
+                    getAddress(user);
+                    getAddressList(user);
+                }
             }
         } catch (error) {
         } finally {
             dispatch({ type: 'SET_LOGGING', payload: false });
         }
+    }
+
+    async function getAddress(user: UserInterface) {
+        ApiServiceHateoas(user.links, 'listar_endereco', async (request) => {
+            try {
+                const response = await request();
+                dispatch({ type: 'SET_USER_ADDRESS', payload: response.data });
+            } catch (erro) {}
+        });
+    }
+
+    async function getAddressList(user: UserInterface) {
+        ApiServiceHateoas(user.links, 'cidades_atendidas', async (request) => {
+            try {
+                const response = await request();
+                dispatch({ type: 'SET_ADDRESS_LIST', payload: response.data });
+            } catch (erro) {}
+        });
     }
 
     return {

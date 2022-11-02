@@ -58,6 +58,36 @@ export const FormSchemaService = {
             .defined();
     },
 
+    contact() {
+        return yup
+            .object()
+            .shape({
+                usuario: yup.object().shape({
+                    email: yup.string().email('E-mail inválido'),
+                    password: yup
+                        .string()
+                        .nullable()
+                        .default(undefined)
+                        .notRequired(),
+                    new_password: yup
+                        .string()
+                        .nullable()
+                        .default(undefined)
+                        .notRequired(),
+                    password_confirmation: yup
+                        .string()
+                        .nullable()
+                        .default(undefined)
+                        .notRequired()
+                        .oneOf(
+                            [yup.ref('password'), null],
+                            'As senhas não estão iguais'
+                        ),
+                }),
+            })
+            .defined();
+    },
+
     payment() {
         return yup
             .object()

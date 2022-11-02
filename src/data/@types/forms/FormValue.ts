@@ -2,6 +2,7 @@ export type FormValues = {
     usuario: {
         email: string;
         password: string;
+        new_password: string;
         password_confirmation: string;
         nome_completo: string;
         nascimento: string;

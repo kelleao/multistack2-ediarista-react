@@ -5,12 +5,13 @@ import { useContext } from 'react';
 import { UserContext } from 'data/contexts/UserContext';
 
 export const FinancialForm = () => {
-    const { register } = useFormContext();
+    const { register } = useFormContext(),
+        { user } = useContext(UserContext).userState;
     return (
         <FinancialData>
             <TextField
                 label={'Chave Pix'}
-                defaultValue={''}
+                defaultValue={user.chave_pix}
                 {...register('usuario.chave_pix', { minLength: 5 })}
             />
         </FinancialData>
