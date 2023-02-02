@@ -15,7 +15,7 @@ import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
 import { houseParts } from '@partials/encontrar-diarista/_detalhes-servico';
-import { ExternalServiceContex } from 'data/contexts/ExternalServiceContext';
+
 import { ApiServiceHateoas, linksResolver } from 'data/services/ApiService';
 import { UserContext } from 'data/contexts/UserContext';
 import { UserInterface, UserType } from 'data/@types/UserInterface';
@@ -25,6 +25,7 @@ import { ApiLinksInterface } from 'data/@types/ApiLinksInterface';
 import { UserService } from 'data/services/UserService';
 import { PaymentService } from 'data/services/PaymentService';
 import { CardInterface } from 'pagarme';
+import { ExternalServiceContext } from 'data/contexts/ExternalServiceContext';
 
 export default function useContratacao() {
     const [step, setStep] = useState(1),
@@ -52,7 +53,7 @@ export default function useContratacao() {
             resolver: yupResolver(FormSchemaService.payment()),
         }),
         { userState, userDispatch } = useContext(UserContext),
-        { externalServicesState } = useContext(ExternalServiceContex),
+        { externalServicesState } = useContext(ExternalServiceContext),
         servicos = useApiHateoas<ServicoInterface[]>(
             externalServicesState.externalServices,
             'listar_servicos'

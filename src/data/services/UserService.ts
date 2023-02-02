@@ -3,8 +3,8 @@ import { UserInterface, UserType } from 'data/@types/UserInterface';
 import { ApiService } from './ApiService';
 import { ObjectService } from './ObjectService';
 import { TextFormatService } from './TextFormatService';
-import { FieldPath, UseFormReturn, FieldValues } from 'react-hook-form';
-import { CadastroUerInterface } from 'data/@types/FormInterface';
+import { UseFormReturn } from 'react-hook-form';
+import { CadastroUserInterface } from 'data/@types/FormInterface';
 import axios from 'axios';
 
 export const UserService = {
@@ -42,7 +42,7 @@ export const UserService = {
 
     handleNewUserError(
         error: any,
-        form: UseFormReturn<CadastroUerInterface>
+        form: UseFormReturn<CadastroUserInterface>
     ): void {
         if (axios.isAxiosError(error)) {
             const errorList = error.response?.data as

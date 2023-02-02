@@ -1,39 +1,40 @@
-import { UserInterface } from './UserInterface';
-import { DiariaInterface } from './DiariaInterface';
-import { CidadeInterface, EnderecoInterface } from './EnderecoInterface';
+import { DiariaInterface } from "./DiariaInterface";
+import { CidadeInterface, EnderecoInterface } from "./EnderecoInterface";
+import { UserInterface } from "./UserInterface";
 
 export interface NovaDiariaFormDataInterface {
-    endereco: EnderecoInterface;
-    faxina: DiariaInterface;
+  endereco: EnderecoInterface;
+  faxina: DiariaInterface;
 }
 
-export interface CadastroDiaristaFormDataInterface {
-    usuario: UserInterface;
-    endereco: EnderecoInterface;
-    enderecosAtendidos: CidadeInterface[];
+export interface CadastroUserInterface {
+  usuario: UserInterface;
+}
+
+export interface CadastroClienteFormDataInterface
+  extends CadastroUserInterface {}
+
+export interface CadastroDiaristaFormDataInterface
+  extends CadastroUserInterface {
+  endereco?: EnderecoInterface;
+  enderecosAtendidos?: CidadeInterface[];
 }
 
 export interface LoginFormDataInterface<T> {
-    login: T;
+  login: T;
 }
 
 export interface CredenciaisInterface {
-    email: string;
-    password: string;
+  email: string;
+  password: string;
 }
-
-export interface CadastroUerInterface {
-    usuario: UserInterface;
-}
-export interface CadastroClienteFormDataInterface
-    extends CadastroUerInterface {}
 
 export interface PagamentoFormDataInterface {
-    pagamento: {
-        nome_cartao: string;
-        numero_cartao: string;
-        codigo: string;
-        validade: string;
-    };
-    pagamento_recusado?: boolean;
+  pagamento: {
+    nome_cartao: string;
+    numero_cartao: string;
+    codigo: string;
+    validade: string;
+  };
+  pagamento_recusado?: boolean;
 }

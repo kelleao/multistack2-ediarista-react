@@ -3,7 +3,7 @@ import {
     CredenciaisInterface,
     LoginFormDataInterface,
 } from 'data/@types/FormInterface';
-import { ExternalServiceContex } from 'data/contexts/ExternalServiceContext';
+import { ExternalServiceContext } from 'data/contexts/ExternalServiceContext';
 import { UserContext } from 'data/contexts/UserContext';
 import { FormSchemaService } from 'data/services/FormSchemaService';
 import { LoginService } from 'data/services/LoginService';
@@ -16,7 +16,7 @@ export default function useLogin() {
         }),
         [errorMessage, setErrorMessage] = useState(''),
         { userDispatch } = useContext(UserContext),
-        { externalServicesState } = useContext(ExternalServiceContex);
+        { externalServicesState } = useContext(ExternalServiceContext);
 
     async function onSubmit(
         data: LoginFormDataInterface<CredenciaisInterface>

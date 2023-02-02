@@ -1,5 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { EnderecoInterface } from 'data/@types/EnderecoInterface';
 import { CadastroDiaristaFormDataInterface } from 'data/@types/FormInterface';
 import { UserInterface, UserType } from 'data/@types/UserInterface';
@@ -60,10 +60,10 @@ export default function useAlterarDados() {
 
     async function updateUser(data: CadastroDiaristaFormDataInterface) {
         ApiServiceHateoas(user.links, 'editar_usuario', async (request) => {
-            const endereco = {
-                ...data.endereco,
-                cep: TextFormatService.getNumberFromText(data.endereco.cep),
-            };
+            // const endereco = {
+            //     ...data.endereco,
+            //     cep: TextFormatService.getNumberFromText(data.endereco?.cep),
+            // };
 
             try {
                 const nascimento = TextFormatService.dateTosString(
@@ -78,7 +78,7 @@ export default function useAlterarDados() {
                         nascimento,
                         cpf,
                         telefonoe,
-                    };
+                    } as UserInterface;
 
                 delete userData.foto_usuario;
 
@@ -93,7 +93,7 @@ export default function useAlterarDados() {
                 }
 
                 const updatedUser = (
-                    await request<UserInterface>({
+                    await request<EnderecoInterface>({
                         data: userData,
                     })
                 ).data;
@@ -107,7 +107,8 @@ export default function useAlterarDados() {
                 });
             } catch (error) {
                 if (axios.isAxiosError(error)) {
-                    if (error?.response?.data?.password) {
+                    const { response } = error as AxiosError<{ password: string }>;
+                    if (response?.data?.password) {
                         formMethods.setError('usuario.password', {
                             type: 'invalida',
                             message: 'Senha inválida',
@@ -144,7 +145,7 @@ export default function useAlterarDados() {
         ApiServiceHateoas(user.links, 'editar_endereco', async (request) => {
             const endereco = {
                 ...data.endereco,
-                cep: TextFormatService.getNumberFromText(data.endereco.cep),
+                cep: TextFormatService.getNumberFromText(data.endereco?.cep),
             };
 
             try {
