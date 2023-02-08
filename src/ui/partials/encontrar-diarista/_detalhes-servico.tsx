@@ -168,7 +168,7 @@ const DetalhesServico: React.FC<DetalhesServicoProps> = ({
                                     mask={'99:99'}
                                     inputProps={{
                                         readOnly: true,
-                                        disabled: 'true',
+                                        disabled: true,
                                     }}
                                     label={'Hora Término'}
                                     error={
