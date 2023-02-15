@@ -5,12 +5,13 @@ import { ServicoInterface } from 'data/@types/ServicoInterface';
 import { FormSchemaService } from 'data/services/FormSchemaService';
 import {
     CadastroClienteFormDataInterface,
+    //CadastroUserInterface,
     CredenciaisInterface,
     LoginFormDataInterface,
     NovaDiariaFormDataInterface,
     PagamentoFormDataInterface,
 } from 'data/@types/FormInterface';
-import  useApiHateoas  from '../useApi.hook';
+import useApiHateoas from '../useApi.hook';
 import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
@@ -125,7 +126,7 @@ export default function useContratacao() {
                 (request) => {
                     request<{ disponibilidade: boolean }>({
                         params: {
-                            cep
+                            cep,
                         },
                     })
                         .then(({ data }) => {
@@ -133,7 +134,7 @@ export default function useContratacao() {
                         })
                         .catch((_error) => {
                             setPodemosAtender(false);
-                    });
+                        });
                 }
             );
         } else {
@@ -142,7 +143,6 @@ export default function useContratacao() {
     }, [cepFaxina]);
 
     function onServiceFormSubmit(data: NovaDiariaFormDataInterface) {
-    
         if (userState.user.nome_completo) {
             criarDiaria(userState.user);
         } else {
@@ -217,7 +217,7 @@ export default function useContratacao() {
 
     async function onPaymentFormSubmit(data: PagamentoFormDataInterface) {
         const cartao = {
-            card_number: data?.pagamento.numero_cartao.replaceAll(' ', ''),
+            card_number: data.pagamento.numero_cartao.replaceAll(' ', ''),
             card_holder_name: data.pagamento.nome_cartao,
             card_cvv: data.pagamento.codigo,
             card_expiration_date: data.pagamento.validade,
@@ -285,11 +285,14 @@ export default function useContratacao() {
     ) {
         let total = 0;
         if (dadosFaxina && tipoLimpeza) {
-            total += tipoLimpeza.valor_banheiro * dadosFaxina.quantidade_banheiros;
-            total += tipoLimpeza.valor_cozinha * dadosFaxina.quantidade_cozinhas;
+            total +=
+                tipoLimpeza.valor_banheiro * dadosFaxina.quantidade_banheiros;
+            total +=
+                tipoLimpeza.valor_cozinha * dadosFaxina.quantidade_cozinhas;
             total += tipoLimpeza.valor_outros * dadosFaxina.quantidade_outros;
             total += tipoLimpeza.valor_quarto * dadosFaxina.quantidade_quartos;
-            total += tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
+            total +=
+                tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
             total += tipoLimpeza.valor_sala * dadosFaxina.quantidade_salas;
         }
 
@@ -316,8 +319,10 @@ export default function useContratacao() {
                                     tempo_atendimento: totalTime,
                                     data_atendimento:
                                         TextFormatService.reverseDate(
-                                            faxina.data_atendimento as string 
-                                        ) + "T" + faxina.hora_inicio,
+                                            faxina.data_atendimento as string
+                                        ) +
+                                        'T' +
+                                        faxina.hora_inicio,
                                 },
                             })
                         ).data;
