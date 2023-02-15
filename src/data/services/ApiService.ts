@@ -30,15 +30,17 @@ async function handleTokenRefresh(error: { config: AxiosRequestConfig }) {
         LocalStorage.clear('token_refresh');
         LocalStorage.clear('token');
         try {
-            const { data } = await ApiService.post('/auth/token/refresh/', {
+            const { data } = await ApiService.post<{
+                access: string; 
+                refresh: string
+            }>('/auth/token/refresh/', {
                 refresh: tokenRefresh,
             });
             LocalStorage.set('token', data.access);
             LocalStorage.set('token_refresh', data.refresh);
 
-            ApiService.defaults.headers.common.Authorization =
-                'Bearer ' + data.access;
-            error.config.headers!.Authorization = 'Bearer ' + data.access;
+            ApiService.defaults.headers.common.Authorization = `Bearer ${data.access}`;
+            error.config.headers!.Authorization = `Bearer ${data.access}`
             return ApiService(error.config);
         } catch (error) {
             return error;
@@ -65,8 +67,8 @@ export function ApiServiceHateoas(
 ) {
     const requestLink = linksResolver(links, name);
     if (requestLink) {
-        onCanRequest(<T>(data?: AxiosRequestConfig) => {
-            return ApiService.request<T>({
+        onCanRequest( async (data) => {
+            return await ApiService.request({
                 method: requestLink.type,
                 url: requestLink.uri,
                 ...data,

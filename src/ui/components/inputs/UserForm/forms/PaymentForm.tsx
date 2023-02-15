@@ -30,8 +30,8 @@ export const PaymentForm = () => {
                         mask={'9999 9999 9999 9999'}
                         label={'Número do cartão'}
                         style={{ gridArea: 'numero' }}
-                        error={errors?.pagamento?.numero_cartao !== undefined}
-                        helperText={errors?.pagamento?.numero_cartao?.message}
+                        error={errors.pagamento?.numero_cartao != undefined}
+                        helperText={errors.pagamento?.numero_cartao?.message}
                     />
                 )}
             />
@@ -40,8 +40,8 @@ export const PaymentForm = () => {
                 label={'Nome impresso no cartão'}
                 style={{ gridArea: 'nome' }}
                 {...register('pagamento.nome_cartao')}
-                error={errors?.pagamento?.nome_cartao !== undefined}
-                helperText={errors?.pagamento?.nome_cartao?.message}
+                error={errors.pagamento?.nome_cartao != undefined}
+                helperText={errors.pagamento?.nome_cartao?.message}
             />
 
             <Controller
@@ -54,8 +54,8 @@ export const PaymentForm = () => {
                         mask={'99/99'}
                         label={'Validade'}
                         style={{ gridArea: 'validade' }}
-                        error={errors?.pagamento?.validade !== undefined}
-                        helperText={errors?.pagamento?.validade?.message}
+                        error={errors.pagamento?.validade != undefined}
+                        helperText={errors.pagamento?.validade?.message}
                     />
                 )}
             />
@@ -67,21 +67,21 @@ export const PaymentForm = () => {
                 render={({ field: { ref, ...inputProps } }) => (
                     <TextFieldMask
                         {...inputProps}
-                        mask={'9999'}
+                        mask={'999'}
                         label={'Código validação'}
                         style={{ gridArea: 'codigo' }}
-                        error={errors?.pagamento?.codigo !== undefined}
-                        helperText={errors?.pagamento?.codigo?.message}
+                        error={errors.pagamento?.codigo != undefined}
+                        helperText={errors.pagamento?.codigo?.message}
                     />
                 )}
             />
 
-            {errors?.pagamento_recusado !== undefined && (
+            {errors.pagamento_recusado != undefined && (
                 <Typography
                     color={'error'}
                     sx={{ gridArea: 'erro', textAlign: 'center' }}
                 >
-                    {errors?.pagamento_recusado?.message}
+                    {errors.pagamento_recusado?.message}
                 </Typography>
             )}
         </PaymentData>

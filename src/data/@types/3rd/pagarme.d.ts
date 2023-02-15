@@ -9,11 +9,11 @@ declare module 'pagarme' {
     }
 
     export interface CardValidateInterface {
-        brand: string;
-        card_cvv: boolean;
-        card_expiration_date: boolean;
-        card_holder_name: boolean;
         card_number: boolean;
+        card_holder_name: boolean;
+        card_expiration_date: boolean;
+        card_cvv: boolean;
+        brand: string;
     }
 }
 

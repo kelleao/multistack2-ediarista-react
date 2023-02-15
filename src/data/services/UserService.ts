@@ -13,7 +13,7 @@ export const UserService = {
         userType: UserType,
         link: ApiLinksInterface
     ): Promise<UserInterface | undefined> {
-        ApiService.defaults.headers.common['Authorization'];
+        ApiService.defaults.headers.common.Authorization = '';
 
         const nascimento = TextFormatService.dateTosString(
                 user.nascimento as Date

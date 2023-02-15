@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetStaticProps, NextPage } from 'next';
 import Advantages from '@partials/index/_advantages';
 import FrequentQuestions from '@partials/index/_frequent-questions';
 import Presentation from '@partials/index/_presentation';
@@ -13,7 +13,7 @@ export const getStaticProps: GetStaticProps = async () => {
     };
 };
 
-export default function Index() {
+const Index: NextPage<{ title: string }> = (props) => {
     const { register } = useForm();
 
     return (
@@ -23,4 +23,6 @@ export default function Index() {
             <FrequentQuestions />
         </div>
     );
-}
+};
+
+export default Index;

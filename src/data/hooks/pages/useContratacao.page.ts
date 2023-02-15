@@ -10,7 +10,7 @@ import {
     NovaDiariaFormDataInterface,
     PagamentoFormDataInterface,
 } from 'data/@types/FormInterface';
-import useApiHateoas from '../useApi.hook';
+import  useApiHateoas  from '../useApi.hook';
 import { DiariaInterface } from 'data/@types/DiariaInterface';
 import { ValidationService } from 'data/services/ValidationService';
 import { DateService } from 'data/services/DateService';
@@ -60,7 +60,7 @@ export default function useContratacao() {
         ).data,
         dadosFaxina = serviceForm.watch('faxina'),
         cepFaxina = serviceForm.watch('endereco.cep'),
-        [podemosAtender, setPodemosAtender] = useState(true),
+        [podemosAtender, setPodemosAtender] = useState(false),
         [novaDiaria, setNovaDiaria] = useState({} as DiariaInterface),
         tipoLimpeza = useMemo<ServicoInterface>(() => {
             if (servicos && dadosFaxina?.servico) {
@@ -117,7 +117,7 @@ export default function useContratacao() {
     }, [dadosFaxina?.hora_inicio, totalTime]);
 
     useEffect(() => {
-        const cep = ((cepFaxina as string) || '').replace(/\D/g, '');
+        const cep = (cepFaxina ?? '').replace(/\D/g, '');
         if (ValidationService.cep(cep)) {
             ApiServiceHateoas(
                 externalServicesState.externalServices,
@@ -125,23 +125,24 @@ export default function useContratacao() {
                 (request) => {
                     request<{ disponibilidade: boolean }>({
                         params: {
-                            cep,
+                            cep
                         },
                     })
                         .then(({ data }) => {
                             setPodemosAtender(data.disponibilidade);
                         })
-                        .catch((_err) => {
+                        .catch((_error) => {
                             setPodemosAtender(false);
-                        });
+                    });
                 }
             );
         } else {
             setPodemosAtender(true);
         }
-    }, [cepFaxina, externalServicesState.externalServices]);
+    }, [cepFaxina]);
 
     function onServiceFormSubmit(data: NovaDiariaFormDataInterface) {
+    
         if (userState.user.nome_completo) {
             criarDiaria(userState.user);
         } else {
@@ -284,14 +285,11 @@ export default function useContratacao() {
     ) {
         let total = 0;
         if (dadosFaxina && tipoLimpeza) {
-            total +=
-                tipoLimpeza.valor_banheiro * dadosFaxina.quantidade_banheiros;
-            total +=
-                tipoLimpeza.valor_cozinha * dadosFaxina.quantidade_cozinhas;
+            total += tipoLimpeza.valor_banheiro * dadosFaxina.quantidade_banheiros;
+            total += tipoLimpeza.valor_cozinha * dadosFaxina.quantidade_cozinhas;
             total += tipoLimpeza.valor_outros * dadosFaxina.quantidade_outros;
             total += tipoLimpeza.valor_quarto * dadosFaxina.quantidade_quartos;
-            total +=
-                tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
+            total += tipoLimpeza.valor_quintal * dadosFaxina.quantidade_quintais;
             total += tipoLimpeza.valor_sala * dadosFaxina.quantidade_salas;
         }
 
@@ -318,10 +316,8 @@ export default function useContratacao() {
                                     tempo_atendimento: totalTime,
                                     data_atendimento:
                                         TextFormatService.reverseDate(
-                                            faxina.data_atendimento +
-                                                'T' +
-                                                faxina.hora_inicio
-                                        ),
+                                            faxina.data_atendimento as string 
+                                        ) + "T" + faxina.hora_inicio,
                                 },
                             })
                         ).data;

@@ -15,10 +15,11 @@ export const NewContactForm = () => {
     return (
         <NewContactData>
             <TextField
+                type={'email'}
                 label={'E-mail'}
                 style={{ gridArea: 'email' }}
                 {...register('usuario.email')}
-                error={errors?.usuario?.email !== undefined}
+                error={errors?.usuario?.email != undefined}
                 helperText={errors?.usuario?.email?.message}
             />
             <TextField
@@ -26,7 +27,7 @@ export const NewContactForm = () => {
                 label={'Senha'}
                 style={{ gridArea: 'senha' }}
                 {...register('usuario.password')}
-                error={errors?.usuario?.password !== undefined}
+                error={errors?.usuario?.password != undefined}
                 helperText={errors?.usuario?.password?.message}
             />
             <TextField
@@ -34,10 +35,10 @@ export const NewContactForm = () => {
                 label={'Confirmação da Senha'}
                 style={{ gridArea: 'confirmar-senha' }}
                 {...register('usuario.password_confirmation')}
-                error={errors?.usuario?.password_confirmation !== undefined}
+                error={errors?.usuario?.password_confirmation != undefined}
                 helperText={errors?.usuario?.password_confirmation?.message}
             />
-            <PasswordStrength password={newPassword || ''} />
+            <PasswordStrength password={newPassword} />
         </NewContactData>
     );
 };

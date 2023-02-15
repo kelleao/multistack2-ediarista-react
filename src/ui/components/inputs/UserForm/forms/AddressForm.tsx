@@ -8,7 +8,6 @@ import TextFieldMask from '../../TextFieldMask/TextFieldMask';
 
 export const AddressForm = () => {
     const {
-        //user,
         userAddress,
         control,
         errors,

@@ -8,7 +8,6 @@ import {
     EnderecoInterface,
 } from 'data/@types/EnderecoInterface';
 import { LoginService } from 'data/services/LoginService';
-import { request } from 'http';
 
 export const initialState = {
     user: {
